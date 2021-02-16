@@ -22,3 +22,14 @@ Start time: 3:55 pm
 Finish time: 5:10 pm
 
 Actual time needed to complete: 1 hour and 15 miniutes
+----------------------------------------------------------------------------------------------
+
+Number and name of feature: filter images
+
+Estimate of time needed to complete: 1 hour
+
+Start time: 3:55 pm
+
+Finish time: 5:10 pm
+
+Actual time needed to complete: 1 hour and 15 miniutes
