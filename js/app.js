@@ -1,36 +1,28 @@
 /* eslint-disable no-undef */
 'use strict';
-let arrayOfNames = [];
+let arrayOfKeywords = [];
 let arrayOfObjects = [];
-let arrayOfImagesPage1 = [];
-let arrayOfImagesPage2 = [];
-let arrayOfNames1 = [];
-let arrayOfNames2 = [];
-// $.ajax('./data/page-1.json').then( (data) => {
-//   data.forEach(value =>{
-//     arrayOfObjects.push(value);
-//     let card = new Card(value);
-//     if(!arrayOfNames.includes(value.keyword)){
-//       arrayOfNames.push(value.keyword);
-//     }
-//     if(!arrayOfObjects.includes(card)){
-//       arrayOfObjects.push(card);
-//     }
-//     // card.render();
 
-//   });
-//   $('#photo-template').first().remove();
-//   arrayOfNames.forEach(value =>{
-//     let dropdownListOption = $('.option').first().clone();
-//     dropdownListOption.text(value);
-//     dropdownListOption.val(value);
-//     $('#selectByKeyword').append(dropdownListOption);
-//   });
-// });//end of ajax function
+$.ajax('./data/page-1.json').then( (data) => {
+  data.forEach(value =>{
+    let card = new Card(value);
+    if(!arrayOfKeywords.includes(value.keyword)){
+      arrayOfKeywords.push(value.keyword);
+    }
+    if(!arrayOfObjects.includes(value)){
+      arrayOfObjects.push(value);
+    }
+    card.render();
+
+  });
+  sortImages(data);
+});//end of ajax for page-1
+
+
 
 $('#selectByKeyword').on('change', function(){
   $('.container').html('<div id="photo-template"><h2></h2><img src="" alt=""><p></p></div>');
-  arrayOfImagesPage1.forEach(value =>{
+  arrayOfObjects.forEach(value =>{
     if(value.keyword === $('#selectByKeyword').val()){
       let card = new Card(value);
       card.render();
@@ -38,6 +30,24 @@ $('#selectByKeyword').on('change', function(){
   });
   $('#photo-template').first().remove();
 });
+
+$.ajax('./data/page-2.json').then( (data) => {
+  data.forEach(value =>{
+    if(!arrayOfKeywords.includes(value.keyword)){
+      arrayOfKeywords.push(value.keyword);
+    }
+    if(!arrayOfObjects.includes(value)){
+      arrayOfObjects.push(value);
+    }
+  });
+
+  arrayOfKeywords.forEach(value =>{
+    let dropdownListOption = $('.option').first().clone();
+    dropdownListOption.text(value);
+    dropdownListOption.val(value);
+    $('#selectByKeyword').append(dropdownListOption);
+  });
+});//end of ajax for page-2
 
 
 function Card(obj){
@@ -49,66 +59,74 @@ function Card(obj){
 }
 
 Card.prototype.render = function(){
-  // let cardCopy = $('#photo-template').first().clone();
-  // cardCopy.find('h2').text(this.title);
-  // cardCopy.find('img').attr('src', this.imgUrl);
-  // cardCopy.find('p').text(this.description);
-  // $('.container').append(cardCopy);
-
   let template = $('#script-container').html();
   let objOfMustache = Mustache.render(template, this);
   $('.container').append(objOfMustache);
-  console.log('rendering');
 };
 
 
 $('#btn1').on('click', ()=>{
-  alert('Button1 clicked');
-  arrayOfImagesPage1 = ajaxData('./data/page-1.json');
-  for(var i=0; i <arrayOfImagesPage1.length; i++){
-    c=console.log(arrayOfImagesPage1[i]);
-  }
-  arrayOfImagesPage1.forEach(value =>{
-    console.log(value);
-    // let newCard = new Card(value);
-    value.render();
-  });
+  ajaxData('./data/page-1.json');
 });
 
 $('#btn2').on('click', ()=>{
-  alert('Button2 clicked');
-  arrayOfImagesPage2 = ajaxData('./data/page-2.json');
-  arrayOfImagesPage2.forEach(value => {
-    // let newCard = new Card(value);
-    value.render();
-  });
+  ajaxData('./data/page-2.json');
 });
 
 function ajaxData(path){
-  let arr = [];
+  $('.container').html('');
   $.ajax(path).then((data) => {
     data.forEach(value =>{
       let card = new Card(value);
-      if(!arrayOfNames.includes(value.keyword)){
-        arrayOfNames.push(value.keyword);
+      if(!arrayOfKeywords.includes(value.keyword)){
+        arrayOfKeywords.push(value.keyword);
       }
-      if(!arr.includes(card)){
-        arr.push(card);
+      if(!arrayOfObjects.includes(value)){
+        arrayOfObjects.push(value);
       }
-      // card.render();
+      card.render();
 
     });
-    // arr.forEach(value =>{
-    //   value.render();
-    // });
-    $('#photo-template').first().remove();
-    arrayOfNames.forEach(value =>{
+    arrayOfKeywords.forEach(value =>{
       let dropdownListOption = $('.option').first().clone();
       dropdownListOption.text(value);
       dropdownListOption.val(value);
       $('#selectByKeyword').append(dropdownListOption);
     });
+    $('#sortBy').val('default');
+    $('#selectByKeyword').val('default');
+    sortImages(data);
   });//end of ajax function
-  return arr;
 
+}
+function sortImages(data){
+  let arr = [...data];
+  $('#sortBy').on('change', function(){
+    if($('#sortBy').val() === 'horns'){
+      arr.sort((a,b) => {
+        if(a.horns < b.horns)
+          return -1;
+        else if(a.horns > b.horns)
+          return 1;
+        else
+          return 0;
+      });
+    }
+    else if(($('#sortBy').val() === 'title')){
+      arr.sort((a,b) => {
+        if(a.title < b.title)
+          return -1;
+        else if(a.title > b.title)
+          return 1;
+        else
+          return 0;
+      });
+    }
+    $('.container').html('');
+    arr.forEach(value => {
+      let newCard = new Card(value);
+      newCard.render();
+    });
+
+  });
 }
