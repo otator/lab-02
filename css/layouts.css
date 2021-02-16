@@ -45,3 +45,17 @@ select{
   border-radius: 10px;
   border: 2px solid black;
 }
+
+.buttons-container{
+  display: flex;
+  justify-content: center;
+}
+#btn1, #btn2{
+  width: 100px;
+  margin: 10px;
+  padding: 5px;
+  background-color: rgb(144, 224, 248);
+  font-size: 18px;
+  box-shadow: 3px 2px 2px 1px rgb(39, 55, 59);
+  border-radius: 5px;
+}
